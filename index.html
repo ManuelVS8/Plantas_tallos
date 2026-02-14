@@ -10,7 +10,7 @@
         * { box-sizing: border-box; margin:0; padding:0; }
         :root{
             --blue:#001DFF;
-            --blue-dark:#04032B; /* Azul oscuro solicitado para títulos */
+            --blue-dark:#04032B;
             --blue-700:#1a3a5f;
             --blue-600:#254fba;
             --orange:#f59e42;
@@ -21,6 +21,9 @@
             --green:#2ecc71;
             --red:#e74c3c;
             --panel:#E8EAFF;
+            --tree-color:#f59e42; /* Naranja */
+            --shrub-color:#e74c3c; /* Rojo */
+            --herb-color:#2ecc71; /* Verde */
         }
         body{
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -38,14 +41,12 @@
             display:flex; flex-direction:column;
         }
         header{ text-align:center; margin-bottom:.8rem; margin-top:1rem; }
-        h1{ color:var(--blue-dark); font-size:clamp(2.1rem,5vw,3rem); font-weight:900; letter-spacing:.5px; margin-bottom: 0.5rem; }
-        .subtitle{ color:var(--blue-700); font-size:clamp(1rem,3vw,1.3rem); margin-top:.25rem; font-weight: 600; line-height: 1.4; }
+        h1{ color:var(--blue-dark); font-size:clamp(2.5rem,6vw,3.5rem); font-weight:900; letter-spacing:.5px; margin-bottom: 0.5rem; }
+        .subtitle{ color:var(--blue-700); font-size:clamp(1.1rem,3.5vw,1.4rem); margin-top:.25rem; font-weight: 600; }
         .highlight-keyword{ color:var(--orange); font-weight:800; }
-        
-        /* Colores específicos para subtítulos */
-        .txt-arbol{ color: var(--blue-600); }
-        .txt-arbusto{ color: var(--red); }
-        .txt-hierba{ color: var(--green); }
+        .highlight-tree{ color:var(--tree-color); font-weight:800; }
+        .highlight-shrub{ color:var(--shrub-color); font-weight:800; }
+        .highlight-herb{ color:var(--herb-color); font-weight:800; }
 
         /* Buttons */
         .btn{ color:#fff; border:none; padding:.75rem 1.2rem; border-radius:10px; cursor:pointer; font-weight:800;
@@ -55,16 +56,6 @@
         .btn:active{ transform:translateY(0); }
         .btn-primary{ background:var(--orange); }
         .btn-primary:hover{ background:var(--orange-700); color:#fff; }
-        
-        /* Botones de respuesta */
-        .answer-buttons{ display: flex; gap: 10px; width: 100%; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
-        .btn-arbol{ background: var(--blue-600); flex: 1; min-width: 120px; }
-        .btn-arbusto{ background: var(--red); flex: 1; min-width: 120px; }
-        .btn-hierba{ background: var(--green); flex: 1; min-width: 120px; }
-        
-        /* Feedback visual en botones */
-        .btn-correct { background-color: #2ecc71 !important; transform: scale(1.05); }
-        .btn-error { background-color: #e74c3c !important; }
 
         .screen{ display:none; animation:fadeIn .35s ease; flex-direction: column; flex:1;}
         .screen.active{ display:flex; }
@@ -72,11 +63,11 @@
 
         .game-info{ display:flex; gap:.6rem; align-items:center; justify-content:space-between; margin:.4rem 0 1rem; flex-wrap:wrap; }
         .timer{ font-weight:900; color:var(--blue-700); font-size:clamp(.95rem,2.3vw,1.15rem); }
-        .level-indicator{ font-weight: 800; color: var(--blue-700); }
+        .level-indicator{ font-weight:900; color:var(--blue-700); font-size:clamp(.95rem,2.3vw,1.15rem); }
         .progress-bar{ flex:1; height:10px; background:#e6f2ff; border-radius:999px; overflow:hidden; }
-        .progress-fill{ height:100%; width:0%; background:var(--orange); transition:width .3s ease; }
+        .progress-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--orange) 0%, var(--orange-700) 100%); transition:width .3s ease; }
 
-        /* Pantalla de Inicio - Estructura específica */
+        /* Pantalla de Inicio */
         .start-content{ display:flex; flex-direction:column; align-items:center; flex:1; padding:1rem; text-align: center; }
         .advice-box{ background:var(--panel); border-left:4px solid var(--blue-700); padding:1.2rem; border-radius:12px;
             color:var(--blue-700); max-width:760px; font-size:clamp(1rem,3vw,1.2rem); line-height: 1.6; margin-bottom: 1rem; }
@@ -87,23 +78,44 @@
         
         .mute-btn{ position:absolute; top:.8rem; right:1rem; background:var(--orange); color:#fff; border:2px solid #fff; width:38px; height:38px; border-radius:50%; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; z-index:20; }
 
-        /* Panel de Juego */
-        .board{ display:flex; flex-direction: column; gap:.8rem; align-items:center; }
-        .help-box { background: var(--panel); padding: 0.8rem; border-radius: 10px; font-size: 1.1rem; text-align: center; margin-bottom: 0.5rem; width: 100%; }
+        /* Panel de Juego General */
+        .board{ display:flex; flex-direction:column; gap:1rem; align-items:center; flex:1; width:100%; }
         
-        .card-display{ 
-            background:#f8fbff; border:2px solid #d3e2ff; border-radius:12px; padding:2rem 1.5rem; 
-            display:flex; flex-direction: column; align-items:center; justify-content:center; gap:.8rem; width: 100%; min-height: 180px;
+        /* Juego 1 y 3 (Imágenes) */
+        .stage{ background:#fff; border-radius:12px; border:2px solid #e6f2ff; padding:.6rem; position: relative; width:100%; max-width:600px; display:flex; flex-direction:column; align-items:center;}
+        .img-wrap{ position:relative; width:100%; max-width:500px; margin:0 auto; }
+        .img-wrap img{ display:block; width:100%; height:auto; border-radius:10px; user-select:none; }
+
+        /* Juego 2 (Tarjetas) */
+        .card-container{ width:100%; max-width:600px; background:#f8fbff; border:2px solid #d3e2ff; border-radius:12px; padding:1.5rem; display:flex; flex-direction:column; align-items:center; gap:1rem; min-height: 200px; justify-content: center;}
+        .card-text{ font-size:clamp(1.2rem, 4vw, 1.6rem); font-weight:700; color:var(--blue-dark); text-align:center; line-height: 1.4; }
+        .btn-play-card{ background:var(--blue-600); color:#fff; border:none; border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background-color .2s; flex-shrink: 0; }
+        .btn-play-card svg{ width:26px; height:26px; }
+
+        /* Botones de Respuesta (Grid) */
+        .answers-grid{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.8rem; width:100%; max-width:600px; margin-top:auto; padding-bottom: 1rem; }
+        .btn-answer{ 
+            color:#fff; border:none; padding:1rem; border-radius:10px; cursor:pointer; font-weight:800; font-size: clamp(1rem, 3vw, 1.2rem); 
+            transition: transform .1s, filter .1s; display:flex; align-items:center; justify-content:center; min-height: 60px;
         }
-        .card-text{ font-size:clamp(1.4rem, 4.5vw, 2rem); font-weight:800; color:var(--blue-dark); text-align:center; line-height: 1.3; }
+        .btn-answer:active{ transform: scale(0.95); }
+        .btn-answer.highlight-correct{ filter: brightness(1.2); transform: scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.5); pointer-events: none; }
+        .btn-answer.highlight-wrong{ filter: brightness(0.8); transform: scale(0.95); pointer-events: none; }
         
-        .btn-play-word{ background:var(--blue-600); color:#fff; border:none; border-radius:50%; width:54px; height:54px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background-color .2s; }
-        .btn-play-word svg{ width:30px; height:30px; }
+        .btn-tree{ background: var(--tree-color); }
+        .btn-shrub{ background: var(--shrub-color); }
+        .btn-herb{ background: var(--herb-color); }
 
-        .stage{ background:#fff; border-radius:12px; border:2px solid #e6f2ff; padding:.6rem; width: 100%; max-width: 600px;}
-        .img-wrap{ position:relative; width:100%; margin:0 auto; }
-        .img-wrap img{ display:block; width:100%; height:auto; border-radius:10px; user-select:none; max-height: 350px; object-fit: contain; margin: 0 auto;}
-
+        /* Pantalla Final */
+        .results{ display:flex; flex-direction:column; align-items:center; gap:.6rem; text-align:center; flex:1; justify-content:center;}
+        .final-title{ color:var(--blue-dark); font-weight:900; }
+        .big-score{ font-size:clamp(2.2rem,6vw,3.4rem); color:var(--blue-600); font-weight:900; }
+        #trophyBox { display: none; font-size: 5 rem; animation: bounce 1s ease infinite; }
+        @keyframes bounce { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-15px); } }
+        
+        .school-logo { display: block; width: 160px; margin-top: 0.8rem; }
+        
+        /* Animaciones */
         .shake { animation: shakeAnim 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shakeAnim {
             10%, 90% { transform: translate3d(-1px, 0, 0); }
@@ -112,17 +124,7 @@
             40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
-        /* Pantalla Final */
-        .results{ display:flex; flex-direction:column; align-items:center; gap:.6rem; text-align:center; flex:1; justify-content:center;}
-        .final-title{ color:var(--blue-dark); font-weight:900; }
-        .big-score{ font-size:clamp(2.5rem,7vw,4rem); color:var(--blue-600); font-weight:900; }
-        #trophyBox { display: none; font-size: 5rem; animation: bounce 1s ease infinite; }
-        @keyframes bounce { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-15px); } }
-        
-        .school-logo { display: block; width: 180px; margin-top: 1rem; }
-        .credit { font-weight: 700; margin-top: 0.5rem; }
-        
-        /* SISTEMA DE CONFETI */
+        /* Confeti */
         .confetti{ 
             position:fixed; 
             width:10px; 
@@ -136,12 +138,18 @@
             0%{ transform:translate(0, -20px) rotate(0); opacity:1;} 
             100%{ transform:translate(var(--tx), var(--ty)) rotate(360deg); opacity:0; } 
         }
+
+        @media (max-width:600px){ 
+            .answers-grid{ gap:0.5rem; }
+            .btn-answer{ font-size: 0.9rem; padding: 0.8rem; min-height: 50px; }
+        }
     </style>
 </head>
 <body>
 <div class="game-container" id="mainContainer">
     <button class="mute-btn" id="muteBtn">🔊</button>
 
+    <!-- Pantalla de Inicio -->
     <section class="screen active" id="startScreen">
         <header>
             <h1>Las plantas y el tallo</h1>
@@ -150,7 +158,7 @@
         
         <div class="start-content">
             <div class="advice-box">
-                En este juego aprenderás a diferenciar los diferentes tipos de plantas según su tallo: <span class="highlight-keyword">árboles</span>, <span class="highlight-keyword">arbustos</span> e <span class="highlight-keyword">hierbas</span>.
+                En este juego aprenderás a diferenciar los diferentes tipos de plantas según su tallo: <span class="highlight-keyword">árboles, arbustos y hierbas</span>.
                 <span class="advice-anim-text">¡Ánimo!</span>
             </div>
 
@@ -162,76 +170,86 @@
         </div>
     </section>
 
+    <!-- Pantalla de Juego 1: Señalar -->
     <section class="screen" id="game1Screen">
         <header><h1>Las plantas y el tallo</h1></header>
-        <div class="subtitle" style="text-align: center; margin-bottom: 10px;">
-            Indica si las siguientes plantas son <span class="txt-arbol">árboles</span>, <span class="txt-arbusto">arbustos</span> o <span class="txt-hierba">hierbas</span>.
-        </div>
+        <div class="subtitle" style="text-align:center;">Indica si las siguientes plantas son <span class="highlight-tree">árboles</span>, <span class="highlight-shrub">arbustos</span> o <span class="highlight-herb">hierbas</span>.</div>
+        
         <div class="game-info">
+            <div class="level-indicator" id="level1">Nivel 1/9</div>
             <div class="progress-bar"><div class="progress-fill" id="progressFill1"></div></div>
-            <div class="level-indicator" id="levelLabel1">Nivel 1/9</div>
+            <div class="timer" id="globalTimer">00:00.0</div>
         </div>
+
         <div class="board">
-            <div class="help-box"><b>Pulsa el botón</b> correspondiente para indicar si es un <span class="txt-arbol">árbol</span>, <span class="txt-arbusto">arbusto</span> o <span class="txt-hierba">hierba</span>.</div>
-            <div class="stage" id="stageImg1">
-                <div class="img-wrap"><img id="plantImg1" src=""></div>
+            <div class="stage">
+                <div class="img-wrap"><img id="gameImg1" src=""></div>
             </div>
-            <div class="answer-buttons">
-                <button class="btn btn-arbol" onclick="checkAnswer('Árbol', this)">Árbol</button>
-                <button class="btn btn-arbusto" onclick="checkAnswer('Arbusto', this)">Arbusto</button>
-                <button class="btn btn-hierba" onclick="checkAnswer('Hierba', this)">Hierba</button>
+            <div class="answers-grid">
+                <button class="btn-answer btn-tree" data-type="Árbol">Árbol</button>
+                <button class="btn-answer btn-shrub" data-type="Arbusto">Arbusto</button>
+                <button class="btn-answer btn-herb" data-type="Hierba">Hierba</button>
             </div>
         </div>
     </section>
 
+    <!-- Pantalla de Juego 2: Preguntas -->
     <section class="screen" id="game2Screen">
         <header><h1>Árboles, arbustos y hierbas</h1></header>
-        <div class="subtitle" style="text-align: center; margin-bottom: 10px;">Indica a qué tipo de planta se refieren las siguientes definiciones.</div>
+        <div class="subtitle" style="text-align:center;">Indica a qué tipo de planta se refieren las siguientes definiciones.</div>
+        
         <div class="game-info">
+            <div class="level-indicator" id="level2">Nivel 1/9</div>
             <div class="progress-bar"><div class="progress-fill" id="progressFill2"></div></div>
-            <div class="level-indicator" id="levelLabel2">Nivel 1/3</div>
+            <div class="timer" id="globalTimer2">00:00.0</div>
         </div>
-        <div class="board" id="board2">
-            <div class="card-display">
-                <div class="card-text" id="defText">—</div>
-                <button class="btn-play-word" id="replayAudioBtn">
+
+        <div class="board">
+            <div class="card-container" id="cardContainer2">
+                <div class="card-text" id="cardText2">—</div>
+                <button class="btn-play-card" id="playCardBtn2">
                     <svg viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
                 </button>
             </div>
-            <div class="answer-buttons">
-                <button class="btn btn-arbol" onclick="checkAnswer('Árbol', this)">Árbol</button>
-                <button class="btn btn-arbusto" onclick="checkAnswer('Arbusto', this)">Arbusto</button>
-                <button class="btn btn-hierba" onclick="checkAnswer('Hierba', this)">Hierba</button>
+            <div class="answers-grid" id="answers2">
+                <button class="btn-answer btn-tree" data-type="Árbol">Árbol</button>
+                <button class="btn-answer btn-shrub" data-type="Arbusto">Arbusto</button>
+                <button class="btn-answer btn-herb" data-type="Hierba">Hierba</button>
             </div>
         </div>
     </section>
 
+    <!-- Pantalla de Juego 3: Paisajes -->
     <section class="screen" id="game3Screen">
         <header><h1>Los paisajes</h1></header>
-        <div class="subtitle" style="text-align: center; margin-bottom: 10px;">Indica si estas imágenes son arboledas, matorrales o praderas.</div>
+        <div class="subtitle" style="text-align:center;">Indica si estas imágenes son <span class="highlight-tree">arboledas</span>, <span class="highlight-shrub">matorrales</span> o <span class="highlight-herb">praderas</span>.</div>
+        
         <div class="game-info">
+            <div class="level-indicator" id="level3">Nivel 1/9</div>
             <div class="progress-bar"><div class="progress-fill" id="progressFill3"></div></div>
-            <div class="level-indicator" id="levelLabel3">Nivel 1/9</div>
+            <div class="timer" id="globalTimer3">00:00.0</div>
         </div>
+
         <div class="board">
-            <div class="stage" id="stageImg3">
-                <div class="img-wrap"><img id="plantImg3" src=""></div>
+            <div class="stage">
+                <div class="img-wrap"><img id="gameImg3" src=""></div>
             </div>
-            <div class="answer-buttons">
-                <button class="btn btn-arbol" onclick="checkAnswer('Arboleda', this)">Arboleda</button>
-                <button class="btn btn-arbusto" onclick="checkAnswer('Matorral', this)">Matorral</button>
-                <button class="btn btn-hierba" onclick="checkAnswer('Pradera', this)">Pradera</button>
+            <div class="answers-grid" id="answers3">
+                <button class="btn-answer btn-tree" data-type="Arboleda">Arboleda</button>
+                <button class="btn-answer btn-shrub" data-type="Matorral">Matorral</button>
+                <button class="btn-answer btn-herb" data-type="Pradera">Pradera</button>
             </div>
         </div>
     </section>
 
+    <!-- Pantalla Final -->
     <section class="screen" id="finalScreen">
         <header><h1 class="final-title">Las plantas y el tallo</h1></header>
         <div class="results">
             <div id="trophyBox">🏆</div>
-            <div class="score-title" style="font-weight: 800; font-size: 1.4rem;">Puntuación:</div>
+            <div class="score-title">Puntuación:</div>
             <div class="big-score" id="finalScore">0</div>
-            <div class="final-time" style="font-weight: 700;">Tiempo total: <span id="finalTime">00:00</span></div>
+            <div class="final-time">Tiempo: <span id="finalTime">00:00.0</span></div>
             <div id="finalMsg" class="subtitle"></div>
             <button class="btn btn-primary" id="backToMenuBtn" style="background:var(--orange);">Volver al menú</button>
             <span class="credit">Creado por Manuel J. Ventura</span>
@@ -241,12 +259,16 @@
 </div>
 
 <script>
+    // Variables Globales
     let isMuted = false, audioUnlocked = false, startTime = 0, timerInterval = null, elapsed = 0;
-    let currentScreen = 'start';
-    let currentIndex = 0;
-    let score1 = 0, score2 = 0, score3 = 0;
     let currentAudio = null, audioTimeout = null;
+    
+    // Contadores de aciertos
+    let hits1 = 0, hits2 = 0, hits3 = 0;
+    let idx1 = 0, idx2 = 0, idx3 = 0;
+    let q1 = [], q2 = [], q3 = [];
 
+    // Objetos de Audio
     const audioObjs = {
         correct: new Audio('https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Correcto.mp3'),
         error: new Audio('https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Error.mp3'),
@@ -255,6 +277,9 @@
         completed: new Audio('https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Completado.mp3')
     };
 
+    // --- DATOS DEL JUEGO ---
+
+    // Juego 1: Imágenes Plantas
     const game1Data = [
         { type: 'Árbol', img: 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Planta1/Planta2/arbol1.png' },
         { type: 'Árbol', img: 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Planta1/Planta2/arbol2.png' },
@@ -267,12 +292,14 @@
         { type: 'Hierba', img: 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Planta1/Planta2/hierba3.png' }
     ];
 
+    // Juego 2: Definiciones
     const game2Data = [
         { type: 'Árbol', text: 'Tienen tallo duro y grueso. Sus ramas salen de un tronco.', audio: 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE//refs/heads/main/Planta1/Planta2/arbol_tallo.mp3' },
         { type: 'Arbusto', text: 'Su tallo es delgado y duro. Sus ramas nacen cerca del suelo', audio: 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE//refs/heads/main/Planta1/Planta2/Arbusto_tallo.mp3' },
         { type: 'Hierba', text: 'Tienen tallo fino y flexible.', audio: 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE//refs/heads/main/Planta1/Planta2/Hierba_tallo.mp3' }
     ];
 
+    // Juego 3: Paisajes
     const game3Data = [
         { type: 'Arboleda', img: 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Planta1/Planta2/arboleda1.png' },
         { type: 'Arboleda', img: 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Planta1/Planta2/arboleda2.png' },
@@ -285,21 +312,25 @@
         { type: 'Pradera', img: 'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Planta1/Planta2/pradera3.png' }
     ];
 
-    let q1 = [], q2 = [], q3 = [];
+    // --- FUNCIONES UTILITARIAS ---
 
     function unlockAudio() { 
         if(audioUnlocked) return; 
         const c=new(window.AudioContext||window.webkitAudioContext)(); 
         const o=c.createOscillator(); 
         const g=c.createGain(); 
-        o.connect(g); g.connect(c.destination); g.gain.value=0.0001; o.start(); o.stop(c.currentTime+0.01); 
+        o.connect(g); 
+        g.connect(c.destination); 
+        g.gain.value=0.0001; 
+        o.start(); 
+        o.stop(c.currentTime+0.01); 
         audioUnlocked=true; 
     }
 
     function playSnd(t) { 
-        if(!isMuted) { 
+        if(!isMuted && audioObjs[t]) { 
             audioObjs[t].currentTime=0; 
-            audioObjs[t].play().catch(e => console.log("Audio play error", e)); 
+            audioObjs[t].play(); 
         } 
     }
 
@@ -307,9 +338,10 @@
         if(isMuted) return;
         if(audioTimeout) clearTimeout(audioTimeout);
         if(currentAudio) { currentAudio.pause(); currentAudio.currentTime=0; }
+        
         audioTimeout = setTimeout(() => { 
             currentAudio = new Audio(url); 
-            currentAudio.play().catch(e => console.log("Task audio error", e)); 
+            currentAudio.play(); 
         }, delay);
     }
 
@@ -321,139 +353,216 @@
     function updateTimer() {
         const d = (Date.now() - startTime)/1000; 
         elapsed = d;
-        const m = Math.floor(d/60).toString().padStart(2,'0'), s = Math.floor(d%60).toString().padStart(2,'0');
-        document.getElementById('finalTime').textContent = `${m}:${s}`;
+        const m = Math.floor(d/60).toString().padStart(2,'0'); 
+        const s = Math.floor(d%60).toString().padStart(2,'0'); 
+        const ms = Math.round((d%1)*10);
+        const timeStr = `${m}:${s}.${ms}`;
+        
+        document.getElementById('globalTimer').textContent = timeStr;
+        const t2 = document.getElementById('globalTimer2');
+        const t3 = document.getElementById('globalTimer3');
+        if(t2) t2.textContent = timeStr;
+        if(t3) t3.textContent = timeStr;
     }
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // --- LÓGICA JUEGO 1 ---
 
     function initGame1() {
-        q1 = [...game1Data].sort(()=>Math.random()-0.5);
-        currentIndex = 0;
-        score1 = 0;
-        currentScreen = 'game1';
-        if(!timerInterval) { startTime = Date.now(); timerInterval = setInterval(updateTimer, 1000); }
-        loadQuestion1();
-    }
-
-    function loadQuestion1() {
-        if(currentIndex >= q1.length) { 
-            initGame2(); 
-            return; 
-        }
-        document.getElementById('plantImg1').src = q1[currentIndex].img;
-        document.getElementById('levelLabel1').textContent = `Nivel ${currentIndex + 1}/${q1.length}`;
-        document.getElementById('progressFill1').style.width = ((currentIndex / q1.length) * 100) + '%';
-        resetButtonStates('game1Screen');
-    }
-
-    function initGame2() {
-        showScreen('game2Screen');
-        q2 = [...game2Data].sort(()=>Math.random()-0.5);
-        currentIndex = 0;
-        score2 = 0;
-        currentScreen = 'game2';
-        loadQuestion2();
-    }
-
-    function loadQuestion2() {
-        if(currentIndex >= q2.length) { 
-            initGame3(); 
-            return; 
-        }
-        document.getElementById('defText').textContent = q2[currentIndex].text;
-        document.getElementById('levelLabel2').textContent = `Nivel ${currentIndex + 1}/${q2.length}`;
-        document.getElementById('progressFill2').style.width = ((currentIndex / q2.length) * 100) + '%';
-        playTaskAudio(q2[currentIndex].audio);
-        resetButtonStates('game2Screen');
-    }
-
-    function initGame3() {
-        showScreen('game3Screen');
-        q3 = [...game3Data].sort(()=>Math.random()-0.5);
-        currentIndex = 0;
-        score3 = 0;
-        currentScreen = 'game3';
-        loadQuestion3();
-    }
-
-    function loadQuestion3() {
-        if(currentIndex >= q3.length) { 
-            finish(); 
-            return; 
-        }
-        document.getElementById('plantImg3').src = q3[currentIndex].img;
-        document.getElementById('levelLabel3').textContent = `Nivel ${currentIndex + 1}/${q3.length}`;
-        document.getElementById('progressFill3').style.width = ((currentIndex / q3.length) * 100) + '%';
-        resetButtonStates('game3Screen');
-    }
-
-    function checkAnswer(ans, btn) {
-        let correct = false;
-        let targetId = '';
+        hits1 = 0; idx1 = 0;
+        q1 = shuffle([...game1Data]);
         
-        if(currentScreen === 'game1') {
-            correct = (ans === q1[currentIndex].type);
-            if(correct) score1++;
-            targetId = 'stageImg1';
-        } else if(currentScreen === 'game2') {
-            correct = (ans === q2[currentIndex].type);
-            if(correct) score2++;
-            targetId = 'board2';
-        } else if(currentScreen === 'game3') {
-            correct = (ans === q3[currentIndex].type);
-            if(correct) score3++;
-            targetId = 'stageImg3';
+        if(!timerInterval) { 
+            startTime = Date.now(); 
+            timerInterval = setInterval(updateTimer, 100); 
         }
+        
+        const buttons = document.querySelectorAll('#game1Screen .btn-answer');
+        buttons.forEach(btn => {
+            btn.onclick = (e) => handleAnswer1(e.target.dataset.type, e.target);
+        });
 
-        if(correct) {
-            btn.classList.add('btn-correct');
-            playSnd('correct');
-        } else {
-            btn.classList.add('btn-error');
-            document.getElementById(targetId).classList.add('shake');
-            playSnd('error');
-            setTimeout(() => document.getElementById(targetId).classList.remove('shake'), 300);
-        }
-
-        // Bloquear botones durante la transición
-        const container = btn.parentElement;
-        container.querySelectorAll('button').forEach(b => b.style.pointerEvents = 'none');
-
-        setTimeout(() => {
-            currentIndex++;
-            container.querySelectorAll('button').forEach(b => b.style.pointerEvents = 'auto');
-            if(currentScreen === 'game1') loadQuestion1();
-            else if(currentScreen === 'game2') loadQuestion2();
-            else if(currentScreen === 'game3') loadQuestion3();
-        }, 800);
+        renderQ1();
     }
 
-    function resetButtonStates(screenId) {
-        document.getElementById(screenId).querySelectorAll('.answer-buttons button').forEach(b => {
-            b.classList.remove('btn-correct', 'btn-error');
+    function renderQ1() {
+        if(idx1 >= q1.length) {
+            setTimeout(initGame2, 600);
+            return;
+        }
+        const item = q1[idx1];
+        document.getElementById('gameImg1').src = item.img;
+        document.getElementById('progressFill1').style.width = ((idx1/q1.length)*100)+'%';
+        document.getElementById('level1').textContent = `Nivel ${idx1+1}/9`;
+        
+        resetButtons('game1Screen');
+    }
+
+    function handleAnswer1(answer, btnElement) {
+        const correct = q1[idx1].type;
+        checkAnswer(answer, correct, btnElement, 'game1Screen', () => {
+            if(answer === correct) hits1++;
+            idx1++;
+            renderQ1();
         });
     }
 
+    // --- LÓGICA JUEGO 2 ---
+
+    function initGame2() {
+        showScreen('game2Screen');
+        hits2 = 0; idx2 = 0;
+        q2 = shuffle([...game2Data]);
+        
+        const buttons = document.querySelectorAll('#game2Screen .btn-answer');
+        buttons.forEach(btn => {
+            btn.onclick = (e) => handleAnswer2(e.target.dataset.type, e.target);
+        });
+
+        document.getElementById('playCardBtn2').onclick = () => playTaskAudio(q2[idx2].audio, 0);
+
+        renderQ2();
+    }
+
+    function renderQ2() {
+        if(idx2 >= q2.length) {
+            setTimeout(initGame3, 600);
+            return;
+        }
+        const item = q2[idx2];
+        document.getElementById('cardText2').textContent = item.text;
+        document.getElementById('progressFill2').style.width = ((idx2/q2.length)*100)+'%';
+        document.getElementById('level2').textContent = `Nivel ${idx2+1}/9`;
+        
+        resetButtons('game2Screen');
+        playTaskAudio(item.audio);
+    }
+
+    function handleAnswer2(answer, btnElement) {
+        const correct = q2[idx2].type;
+        checkAnswer(answer, correct, btnElement, 'game2Screen', () => {
+            if(answer === correct) hits2++;
+            idx2++;
+            renderQ2();
+        });
+    }
+
+    // --- LÓGICA JUEGO 3 ---
+
+    function initGame3() {
+        showScreen('game3Screen');
+        hits3 = 0; idx3 = 0;
+        q3 = shuffle([...game3Data]);
+        
+        const buttons = document.querySelectorAll('#game3Screen .btn-answer');
+        buttons.forEach(btn => {
+            btn.onclick = (e) => handleAnswer3(e.target.dataset.type, e.target);
+        });
+
+        renderQ3();
+    }
+
+    function renderQ3() {
+        if(idx3 >= q3.length) {
+            finish();
+            return;
+        }
+        const item = q3[idx3];
+        document.getElementById('gameImg3').src = item.img;
+        document.getElementById('progressFill3').style.width = ((idx3/q3.length)*100)+'%';
+        document.getElementById('level3').textContent = `Nivel ${idx3+1}/9`;
+        
+        resetButtons('game3Screen');
+    }
+
+    function handleAnswer3(answer, btnElement) {
+        const correct = q3[idx3].type;
+        checkAnswer(answer, correct, btnElement, 'game3Screen', () => {
+            if(answer === correct) hits3++;
+            idx3++;
+            renderQ3();
+        });
+    }
+
+    // --- MECÁNICA DE RESPUESTA ---
+
+    function resetButtons(screenId) {
+        const buttons = document.querySelectorAll(`#${screenId} .btn-answer`);
+        buttons.forEach(btn => {
+            btn.classList.remove('highlight-correct', 'highlight-wrong');
+            btn.disabled = false;
+        });
+    }
+
+    function checkAnswer(answer, correct, btnElement, screenId, callback) {
+        const buttons = document.querySelectorAll(`#${screenId} .btn-answer`);
+        buttons.forEach(b => b.disabled = true);
+
+        if(answer === correct) {
+            btnElement.classList.add('highlight-correct');
+            playSnd('correct');
+            setTimeout(() => {
+                callback();
+            }, 600);
+        } else {
+            btnElement.classList.add('highlight-wrong');
+            const container = document.getElementById('mainContainer');
+            container.classList.add('shake');
+            
+            buttons.forEach(b => {
+                if(b.dataset.type === correct) {
+                    b.classList.add('highlight-correct');
+                }
+            });
+
+            playSnd('error');
+
+            setTimeout(() => {
+                container.classList.remove('shake');
+                callback();
+            }, 1000);
+        }
+    }
+
+    // --- FINAL ---
+
     function finish() {
         clearInterval(timerInterval);
-        const finalScore = Math.round(((score1/q1.length + score2/q2.length + score3/q3.length) / 3) * 100);
         
-        document.getElementById('finalScore').textContent = finalScore;
+        const totalQuestions = q1.length + q2.length + q3.length;
+        const totalHits = hits1 + hits2 + hits3;
         
-        if(finalScore === 100) {
-            document.getElementById('trophyBox').style.display = 'block';
-            document.getElementById('finalMsg').textContent = '¡Enhorabuena, puntuación máxima!';
-            playSnd('victory');
-            createConfetti();
-        } else {
-            document.getElementById('trophyBox').style.display = 'none';
-            document.getElementById('finalMsg').textContent = '¡Buen trabajo! Sigue practicando';
-            playSnd('completed');
+        const score = Math.round((((hits1/q1.length)+(hits2/q2.length)+(hits3/q3.length))/3)*100);
+
+        document.getElementById('finalScore').textContent = score;
+        document.getElementById('finalTime').textContent = document.getElementById('globalTimer').textContent;
+        
+        const trophy = document.getElementById('trophyBox');
+        const msg = document.getElementById('finalMsg');
+
+        if(score >= 100) { 
+            trophy.style.display='block'; 
+            msg.textContent='¡Enhorabuena, puntuación máxima!'; 
+            playSnd('victory'); 
+            createConfetti(); 
+        } else { 
+            trophy.style.display='none'; 
+            msg.textContent='¡Buen trabajo! Sigue practicando'; 
+            playSnd('completed'); 
         }
+        
         showScreen('finalScreen');
     }
 
     function createConfetti() {
-        for(let i=0; i<100; i++){
+        for(let i=0;i<100;i++){
             setTimeout(()=>{
                 const c = document.createElement('div');
                 c.className = 'confetti';
@@ -470,28 +579,26 @@
         }
     }
 
+    // --- EVENTOS INICIALES ---
+
     document.getElementById('playBtn').onclick = () => { 
         unlockAudio(); 
         playSnd('tap'); 
         showScreen('game1Screen'); 
         initGame1(); 
     };
-
-    document.getElementById('replayAudioBtn').onclick = () => {
-        playSnd('tap');
-        playTaskAudio(q2[currentIndex].audio, 0);
-    };
-
+    
     document.getElementById('backToMenuBtn').onclick = () => { 
         playSnd('tap'); 
         location.reload(); 
     };
-
+    
     document.getElementById('muteBtn').onclick = () => { 
         isMuted = !isMuted; 
-        document.getElementById('muteBtn').textContent = isMuted ? '🔇' : '🔊'; 
+        document.getElementById('muteBtn').textContent = isMuted?'🔇':'🔊'; 
         if(currentAudio) currentAudio.pause(); 
     };
+
 </script>
 </body>
 </html>
